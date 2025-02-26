@@ -6,9 +6,11 @@ configDotenv()
 
 const SERVER_URL = process.env.SERVER_URL
 
+
 export const getAllSubscriptions = async (req, res, next) => {
     try {
-        const subscriptions = await Subscription.find();
+        // Filter subscriptions by the authenticated user's ID
+        const subscriptions = await Subscription.find({ user: req.user._id });
         res.status(200).json({
             success: true,
             data: subscriptions
@@ -17,7 +19,6 @@ export const getAllSubscriptions = async (req, res, next) => {
         next(error);
     }
 };
-
 
 export const createSubscription = async (req, res, next) => {
     try {
@@ -41,9 +42,7 @@ export const createSubscription = async (req, res, next) => {
     } catch (e) {
       next(e);
     }
-  }
-
-
+}
 
 export const getUserSubscriptions = async (req, res, next) => {
     try {
@@ -84,16 +83,23 @@ export const getSubscriptionById = async (req, res, next) => {
 
 export const updateSubscription = async (req, res, next) => {
     try {
-        const subscription = await Subscription.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true }
-        );
+        const subscription = await Subscription.findById(req.params.id);
         if (!subscription) {
             const error = new Error("Subscription not found");
             error.statusCode = 404;
             throw error;
         }
+
+        // Check if the subscription belongs to the authenticated user
+        if (String(subscription.user) !== String(req.user._id)) {
+            const error = new Error("You are not authorized to update this subscription");
+            error.statusCode = 403;
+            throw error;
+        }
+
+        // Proceed with the update
+        Object.assign(subscription, req.body);
+        await subscription.save();
 
         res.status(200).json({
             success: true,
@@ -131,7 +137,7 @@ export const cancelSubscription = async (req, res, next) => {
             throw error;
         }
 
-        subscription.status = "Cancelled";
+        subscription.status = "cancelled";
         await subscription.save();
 
         res.status(200).json({
@@ -145,15 +151,18 @@ export const cancelSubscription = async (req, res, next) => {
 
 export const getUpcomingRenewals = async (req, res, next) => {
     try {
-        const subscriptions = await Subscription.find({
-            renewalDate: { $gte: new Date() }
-        });
-
-        res.status(200).json({
-            success: true,
-            data: subscriptions
-        });
+      // Only fetch subscriptions for the authenticated user with upcoming renewal dates
+      const subscriptions = await Subscription.find({
+        user: req.user._id,
+        renewalDate: { $gte: new Date() }
+      });
+  
+      res.status(200).json({
+        success: true,
+        data: subscriptions
+      });
     } catch (error) {
-        next(error);
+      next(error);
     }
-};
+  };
+  
