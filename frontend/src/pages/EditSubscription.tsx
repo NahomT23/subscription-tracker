@@ -92,7 +92,7 @@ const EditSubscription: React.FC = () => {
           darkMode ? "text-blue-400 hover:text-blue-300" : "text-blue-600 hover:text-blue-700"
         } transition duration-300 z-50`}
       >
-        LOGO
+        SubLog
       </Link>
 
       {/* Dark Mode Toggle (Positioned similarly to Dashboard) */}

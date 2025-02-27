@@ -62,14 +62,14 @@ const SubscriptionDetail: React.FC = () => {
 
   return (
     <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-100"} p-8`}>
-      {/* Logo */}
+      
       <Link
         to="/dashboard"
         className={`fixed top-4 left-4 text-xl font-bold ${
           darkMode ? "text-blue-400 hover:text-blue-300" : "text-blue-600 hover:text-blue-700"
         } transition duration-300 z-50`}
       >
-        LOGO
+        SubLog
       </Link>
 
       {/* Dark Mode Toggle */}
@@ -114,22 +114,7 @@ const SubscriptionDetail: React.FC = () => {
           </table>
         </div>
 
-        {/* {subscription.status === "active" && (
-          <div className="mt-6">
-            <button
-              onClick={async () => {
 
-              }}
-              className={`px-4 py-2 rounded-lg font-medium transition duration-300 ${
-                darkMode
-                  ? "bg-red-600 hover:bg-red-700 focus:ring-red-200"
-                  : "bg-red-500 hover:bg-red-600 focus:ring-red-100"
-              } text-white focus:ring-2 focus:outline-none`}
-            >
-              Cancel Subscription
-            </button>
-          </div>
-        )} */}
         {subscription.status === "active" && (
   <div className="mt-6">
     <button

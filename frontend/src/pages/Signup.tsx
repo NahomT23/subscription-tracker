@@ -95,7 +95,7 @@ const Signup: React.FC = () => {
           Already have an account?{" "}
           <Link 
             to="/signin" 
-            className="bg-gradient-to-r from-[#FF6B6B] to-[#FF8E53] bg-clip-text text-white font-semibold hover:opacity-80 transition-opacity"
+            className="bg-gradient-to-r from-[#FF6B6B] to-[#FF8E53] bg-clip-text text-blue-600 font-semibold hover:opacity-80 transition-opacity"
           >
             Sign In
           </Link>
