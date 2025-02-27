@@ -9,12 +9,18 @@ import cookieParser from 'cookie-parser';
 import { configDotenv } from 'dotenv';
 import arcjetMiddleware from './middlewares/arcjet.middleware.js';
 import workflowRouter from './routes/workflow.routes.js';
-
+import cors from "cors"
 configDotenv()
 
 const app = express();
 const PORT = process.env.PORT || 4000
 
+const corsOptions = {
+  origin: 'http://localhost:5173',
+  credentials: true, 
+};
+
+app.use(cors(corsOptions)); 
 
 app.use(express.json());
 app.use(cookieParser())  

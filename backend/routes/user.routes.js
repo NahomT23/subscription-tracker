@@ -7,7 +7,7 @@ const userRouter = Router()
 userRouter.get('/', getUsers)
 userRouter.get('/:id', authorize, getUser)
 
-
+userRouter.get('/me', authorize, getUser)
 
 userRouter.post('/', )
 userRouter.put('/:id',)
