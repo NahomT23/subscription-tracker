@@ -1,1 +1,98 @@
 @import "tailwindcss";
+
+/* Light Mode */
+body {
+    background-color: #f7fafc;
+    color: #1a202c;
+  }
+  
+  /* Dark Mode */
+  body.dark {
+    background-color: #1a202c;
+    color: #f7fafc;
+  }
+  
+  /* Example for buttons */
+  button {
+    background-color: #ffffff;
+    color: #1a202c;
+  }
+  
+  button.dark {
+    background-color: #2d3748;
+    color: #f7fafc;
+  }
+
+  /* Dashboard.css */
+
+.dashboard-container {
+    height: 100vh;
+    padding: 2rem;
+    overflow-y: auto;
+  }
+  
+  .dashboard-content {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dashboard-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .create-subscription-btn,
+  .logout-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .create-subscription-btn {
+    background: #3182ce;
+    color: #ffffff;
+  }
+  
+  .logout-btn {
+    background: #e53e3e;
+    color: #ffffff;
+  }
+  
+  .dashboard-tables {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  /* On larger screens, display the two sections side-by-side */
+  @media (min-width: 1024px) {
+    .dashboard-tables {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  .welcome-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .user-email {
+    margin-bottom: 2rem;
+  }
+  
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  

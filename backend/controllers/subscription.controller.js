@@ -151,10 +151,11 @@ export const cancelSubscription = async (req, res, next) => {
 
 export const getUpcomingRenewals = async (req, res, next) => {
     try {
-      // Only fetch subscriptions for the authenticated user with upcoming renewal dates
+
       const subscriptions = await Subscription.find({
         user: req.user._id,
-        renewalDate: { $gte: new Date() }
+        renewalDate: { $gte: new Date() },
+        status: { $ne: "cancelled" } 
       });
   
       res.status(200).json({

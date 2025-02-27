@@ -1,0 +1,23 @@
+
+/* Light Mode */
+body {
+    background-color: #f7fafc;
+    color: #1a202c;
+  }
+  
+  /* Dark Mode */
+  body.dark {
+    background-color: #1a202c;
+    color: #f7fafc;
+  }
+  
+  /* Example for buttons */
+  button {
+    background-color: #ffffff;
+    color: #1a202c;
+  }
+  
+  button.dark {
+    background-color: #2d3748;
+    color: #f7fafc;
+  }

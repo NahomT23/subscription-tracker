@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import DarkModeToggle from "../components/DarkModeToggle";
+import useThemeStore from "../store/themeStore";
 
 const CreateSubscription: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +14,7 @@ const CreateSubscription: React.FC = () => {
     startDate: "",
   });
   const navigate = useNavigate();
+  const { darkMode } = useThemeStore()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -43,71 +46,153 @@ const CreateSubscription: React.FC = () => {
     }
   };
 
+
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-bold mb-4">Create Subscription</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="name"
-            placeholder="Subscription Name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border rounded-md"
-          />
-          <input
-            type="number"
-            name="price"
-            placeholder="Price"
-            value={formData.price}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border rounded-md"
-          />
-          <select
-            name="currency"
-            value={formData.currency}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md"
-          >
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
-            <option value="BIRR">BIRR</option>
-            {/* Add other currencies as needed */}
-          </select>
-          <select
-            name="frequency"
-            value={formData.frequency}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md"
-          >
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-            <option value="yearly">Yearly</option>
-          </select>
-          <input
-            type="text"
-            name="paymentMethod"
-            placeholder="Payment Method"
-            value={formData.paymentMethod}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border rounded-md"
-          />
-          <input
-            type="date"
-            name="startDate"
-            value={formData.startDate}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border rounded-md"
-          />
+    <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-100"} p-8`}>
+      {/* Logo */}
+      <Link
+        to="/dashboard"
+        className={`fixed top-4 left-4 text-xl font-bold ${
+          darkMode ? "text-blue-400 hover:text-blue-300" : "text-blue-600 hover:text-blue-700"
+        } transition duration-300 z-50`}
+      >
+        LOGO
+      </Link>
+
+      {/* Dark Mode Toggle */}
+      <div className="fixed top-4 right-4 z-50">
+        <DarkModeToggle />
+      </div>
+
+      <div
+        className={`max-w-md mx-auto rounded-lg shadow-md p-6 transition-colors duration-300 ${
+          darkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-800"
+        }`}
+      >
+        <h2 className={`text-2xl font-bold mb-6 ${darkMode ? "text-blue-400" : "text-blue-600"}`}>
+          Create New Subscription
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+              Subscription Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className={`w-full px-4 py-2 rounded-lg border ${
+                darkMode
+                  ? "bg-gray-700 border-gray-600 focus:border-blue-400"
+                  : "border-gray-300 focus:border-blue-500"
+              } transition duration-300 focus:ring-2 focus:ring-blue-200 outline-none`}
+            />
+          </div>
+
+          <div>
+            <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+              Price
+            </label>
+            <input
+              type="number"
+              name="price"
+              value={formData.price}
+              onChange={handleChange}
+              required
+              className={`w-full px-4 py-2 rounded-lg border ${
+                darkMode
+                  ? "bg-gray-700 border-gray-600 focus:border-blue-400"
+                  : "border-gray-300 focus:border-blue-500"
+              } transition duration-300 focus:ring-2 focus:ring-blue-200 outline-none`}
+            />
+          </div>
+
+          <div>
+            <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+              Currency
+            </label>
+            <select
+              name="currency"
+              value={formData.currency}
+              onChange={handleChange}
+              className={`w-full px-4 py-2 rounded-lg border ${
+                darkMode
+                  ? "bg-gray-700 border-gray-600 focus:border-blue-400"
+                  : "border-gray-300 focus:border-blue-500"
+              } transition duration-300 focus:ring-2 focus:ring-blue-200 outline-none`}
+            >
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="BIRR">BIRR</option>
+            </select>
+          </div>
+
+          <div>
+            <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+              Billing Frequency
+            </label>
+            <select
+              name="frequency"
+              value={formData.frequency}
+              onChange={handleChange}
+              className={`w-full px-4 py-2 rounded-lg border ${
+                darkMode
+                  ? "bg-gray-700 border-gray-600 focus:border-blue-400"
+                  : "border-gray-300 focus:border-blue-500"
+              } transition duration-300 focus:ring-2 focus:ring-blue-200 outline-none`}
+            >
+              <option value="daily">Daily</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+          </div>
+
+          <div>
+            <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+              Payment Method
+            </label>
+            <input
+              type="text"
+              name="paymentMethod"
+              value={formData.paymentMethod}
+              onChange={handleChange}
+              required
+              className={`w-full px-4 py-2 rounded-lg border ${
+                darkMode
+                  ? "bg-gray-700 border-gray-600 focus:border-blue-400"
+                  : "border-gray-300 focus:border-blue-500"
+              } transition duration-300 focus:ring-2 focus:ring-blue-200 outline-none`}
+            />
+          </div>
+
+          <div>
+            <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+              Start Date
+            </label>
+            <input
+              type="date"
+              name="startDate"
+              value={formData.startDate}
+              onChange={handleChange}
+              required
+              className={`w-full px-4 py-2 rounded-lg border ${
+                darkMode
+                  ? "bg-gray-700 border-gray-600 focus:border-blue-400"
+                  : "border-gray-300 focus:border-blue-500"
+              } transition duration-300 focus:ring-2 focus:ring-blue-200 outline-none`}
+            />
+          </div>
+
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300"
+            className={`w-full py-2 px-4 rounded-lg font-medium transition duration-300 ${
+              darkMode
+                ? "bg-blue-600 hover:bg-blue-700 focus:ring-blue-200"
+                : "bg-blue-700 hover:bg-blue-600 focus:ring-blue-100"
+            } text-white focus:ring-2 focus:outline-none`}
           >
             Create Subscription
           </button>
