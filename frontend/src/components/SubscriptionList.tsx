@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import useThemeStore from "../store/themeStore";
-
-
+import SearchAndFilter from "./SearchAndFilter";
+import { Subscription } from "../types";
 
 const SubscriptionList: React.FC = () => {
-  const [subscriptions, setSubscriptions ] = useState<any[]>([]);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [filteredSubscriptions, setFilteredSubscriptions] = useState<Subscription[]>([]);
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
-  const { darkMode } = useThemeStore(); 
-
+  const { darkMode } = useThemeStore();
 
   useEffect(() => {
     const fetchSubscriptions = async () => {
@@ -26,6 +26,7 @@ const SubscriptionList: React.FC = () => {
         }
         const data = await response.json();
         setSubscriptions(data.data);
+        setFilteredSubscriptions(data.data);
       } catch (error) {
         console.error(error);
       }
@@ -33,17 +34,79 @@ const SubscriptionList: React.FC = () => {
     fetchSubscriptions();
   }, []);
 
+  const handleSearch = (term: string) => {
+    const filtered = subscriptions.filter((sub) =>
+      sub.name.toLowerCase().includes(term.toLowerCase())
+    );
+    setFilteredSubscriptions(filtered);
+  };
+
+
+  const handleFilter = (filterBy: string) => {
+    let sorted = [...filteredSubscriptions];
+    switch (filterBy) {
+      case "created_at":
+        sorted.sort((a, b) => {
+          const dateA = new Date(a.createdAt).getTime();
+          const dateB = new Date(b.createdAt).getTime();
+          return dateA - dateB;
+        });
+        break;
+  
+      case "updated_at":
+        sorted.sort((a, b) => {
+          const dateA = new Date(a.updatedAt).getTime();
+          const dateB = new Date(b.updatedAt).getTime();
+          return dateA - dateB;
+        });
+        break;
+  
+      case "status":
+        sorted.sort((a, b) => a.status.localeCompare(b.status));
+        break;
+  
+      case "renewal_date":
+        sorted.sort((a, b) => {
+          const dateA = new Date(a.renewalDate).getTime();
+          const dateB = new Date(b.renewalDate).getTime();
+          return dateA - dateB;
+        });
+        break;
+  
+      case "longest":
+        sorted.sort((a, b) => {
+          const dateA = new Date(a.renewalDate).getTime();
+          const dateB = new Date(b.renewalDate).getTime();
+          return dateB - dateA;
+        });
+        break;
+  
+      default:
+        break;
+    }
+    setFilteredSubscriptions(sorted);
+  };
+
   return (
-    <div ref={ref} className="overflow-x-auto">
-      {subscriptions.length > 0 ? (
-        <motion.table
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className={`min-w-full shadow-lg rounded-lg overflow-hidden ${
-            darkMode ? 'bg-gray-800' : 'bg-white'
-          }`}
-        >
+    <div ref={ref} className="overflow-hidden"> 
+  <h3 style={{ 
+    fontSize: "1.125rem",
+    fontWeight: 600,
+    marginBottom: "1rem",
+    color: darkMode ? "#cbd5e0" : "#2d3748"
+  }}>
+  </h3>
+  <SearchAndFilter onSearch={handleSearch} onFilter={handleFilter} />
+  {filteredSubscriptions.length > 0 ? (
+    <motion.table
+      initial={{ opacity: 0, y: 20 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className={`min-w-full shadow-lg rounded-lg overflow-hidden ${
+        darkMode ? 'bg-gray-800' : 'bg-white'
+      }`}
+      style={{ tableLayout: 'fixed' }} 
+    >
           <thead className={`bg-gradient-to-r ${
             darkMode 
               ? 'from-blue-600 to-purple-600' 
@@ -57,7 +120,7 @@ const SubscriptionList: React.FC = () => {
             </tr>
           </thead>
           <tbody className={darkMode ? "text-gray-300" : "text-gray-700"}>
-            {subscriptions.map((subscription) => (
+            {filteredSubscriptions.map((subscription) => (
               <motion.tr
                 key={subscription._id}
                 className={`border-b transition duration-300 ${
@@ -104,5 +167,4 @@ const SubscriptionList: React.FC = () => {
   );
 };
 
-
-export default SubscriptionList;
+export default SubscriptionList
