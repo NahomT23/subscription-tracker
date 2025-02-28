@@ -19,6 +19,8 @@ const EditSubscription: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { darkMode } = useThemeStore();
+  const apiUrl = import.meta.env.VITE_API_URL;
+  
 
   useEffect(() => {
     const fetchSubscription = async () => {
@@ -26,7 +28,7 @@ const EditSubscription: React.FC = () => {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const response = await fetch(`http://localhost:5000/api/v1/subscriptions/${id}`, {
+        const response = await fetch(`${apiUrl}/api/v1/subscriptions/${id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -60,7 +62,7 @@ const EditSubscription: React.FC = () => {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const response = await fetch(`http://localhost:5000/api/v1/subscriptions/${id}`, {
+      const response = await fetch(`${apiUrl}/api/v1/subscriptions/${id}`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,

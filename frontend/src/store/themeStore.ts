@@ -5,19 +5,30 @@ interface ThemeState {
   toggleDarkMode: () => void;
 }
 
-const useThemeStore = create<ThemeState>((set) => ({
-  darkMode: localStorage.getItem("darkMode") === "true", // Initialize from localStorage
-  toggleDarkMode: () =>
-    set((state) => {
-      const newDarkMode = !state.darkMode;
-      localStorage.setItem("darkMode", String(newDarkMode)); // Persist to localStorage
-      if (newDarkMode) {
-        document.documentElement.classList.add("dark"); // Add 'dark' class to <html>
-      } else {
-        document.documentElement.classList.remove("dark"); // Remove 'dark' class
-      }
-      return { darkMode: newDarkMode };
-    }),
-}));
+const useThemeStore = create<ThemeState>((set) => {
+  const storedDarkMode = localStorage.getItem("darkMode");
+  const defaultDarkMode = storedDarkMode !== null ? storedDarkMode === "true" : true; // Default to true
+
+  if (defaultDarkMode) {
+    document.documentElement.classList.add("dark"); 
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
+
+  return {
+    darkMode: defaultDarkMode,
+    toggleDarkMode: () =>
+      set((state) => {
+        const newDarkMode = !state.darkMode;
+        localStorage.setItem("darkMode", String(newDarkMode));
+        if (newDarkMode) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+        return { darkMode: newDarkMode };
+      }),
+  };
+});
 
 export default useThemeStore;

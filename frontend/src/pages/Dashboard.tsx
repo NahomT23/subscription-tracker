@@ -15,9 +15,17 @@ const Dashboard: React.FC = () => {
   const { darkMode } = useThemeStore();
   const hasFetched = useRef(false);
 
+
+  
+  
+  const apiUrl = import.meta.env.VITE_API_URL;
+  
   useEffect(() => {
+    
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
+
+  
     };
 
     window.addEventListener('resize', handleResize);
@@ -35,7 +43,7 @@ const Dashboard: React.FC = () => {
           navigate("/signin");
           return;
         }
-        const response = await fetch("http://localhost:5000/api/v1/users/me", {
+        const response = await fetch(`${apiUrl}/api/v1/users/me`, {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -61,6 +69,8 @@ const Dashboard: React.FC = () => {
   if (!user) {
     return <LoadingMessage message="Loading your dashboard..." />;
   }
+
+  
 
   return (
     <div className={darkMode ? "dark" : ""}>

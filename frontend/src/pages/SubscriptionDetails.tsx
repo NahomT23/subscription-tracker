@@ -10,14 +10,15 @@ const SubscriptionDetail: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate(); 
   const { darkMode } = useThemeStore();
-
+  const apiUrl = import.meta.env.VITE_API_URL;
+  
   useEffect(() => {
     const fetchSubscription = async () => {
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const response = await fetch(`http://localhost:5000/api/v1/subscriptions/${id}`, {
+        const response = await fetch(`${apiUrl}/api/v1/subscriptions/${id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -58,7 +59,7 @@ const SubscriptionDetail: React.FC = () => {
         return;
       }
       const response = await fetch(
-        `http://localhost:5000/api/v1/subscriptions/${id}/cancel`,
+        `${apiUrl}/api/v1/subscriptions/${id}/cancel`,
         {
           method: "PUT",
           headers: {
@@ -85,7 +86,7 @@ const SubscriptionDetail: React.FC = () => {
         return;
       }
       const response = await fetch(
-        `http://localhost:5000/api/v1/subscriptions/${id}`,
+        `${apiUrl}/api/v1/subscriptions/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -138,7 +139,14 @@ const SubscriptionDetail: React.FC = () => {
                 Frequency: subscription.frequency,
                 Category: subscription.category,
                 "Payment Method": subscription.paymentMethod,
-                "Start Date": new Date(subscription.startDate).toLocaleDateString("en-GB"),
+"Start Date": subscription.startDate 
+  ? new Date(subscription.startDate).toLocaleDateString('en-GB') 
+  : "Not set",
+
+"Renewal Date": subscription.renewalDate 
+  ? new Date(subscription.renewalDate).toLocaleDateString('en-GB') 
+  : "Not set",
+
                 Status: subscription.status,
               }).map(([label, value]) => (
                 <tr

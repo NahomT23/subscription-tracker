@@ -9,13 +9,15 @@ const CreateSubscription: React.FC = () => {
     price: 0,
     currency: "USD",
     frequency: "monthly",
-    category: "other", // Add default category
+    category: "other",
     paymentMethod: "",
     startDate: "",
   });
   const navigate = useNavigate();
   const { darkMode } = useThemeStore();
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -27,7 +29,7 @@ const CreateSubscription: React.FC = () => {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const response = await fetch("http://localhost:5000/api/v1/subscriptions", {
+      const response = await fetch(`${apiUrl}/api/v1/subscriptions`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

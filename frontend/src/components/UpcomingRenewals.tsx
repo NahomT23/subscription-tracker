@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 const UpcomingRenewals: React.FC = () => {
   const [renewals, setRenewals] = useState<any[]>([]);
+  const apiUrl = import.meta.env.VITE_API_URL;
+  
 
   useEffect(() => {
     const fetchRenewals = async () => {
@@ -9,7 +11,7 @@ const UpcomingRenewals: React.FC = () => {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const response = await fetch("http://localhost:5000/api/v1/subscriptions/upcoming-renewals", {
+        const response = await fetch(`${apiUrl}/api/v1/subscriptions/upcoming-renewals`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

@@ -1,4 +1,84 @@
-import React, { useEffect, useState, useRef } from "react";
+// import React, { useEffect, useState, useRef } from "react";
+// import { motion } from "framer-motion";
+// import { useInView } from "react-intersection-observer";
+// import useThemeStore from "../store/themeStore";
+// import { Line, Pie, Bar } from "react-chartjs-2";
+// import {
+//   Chart as ChartJS,
+//   CategoryScale,
+//   LinearScale,
+//   PointElement,
+//   LineElement,
+//   ArcElement,
+//   BarElement,
+//   Tooltip,
+//   Legend,
+// } from "chart.js";
+
+// ChartJS.register(
+//   CategoryScale,
+//   LinearScale,
+//   PointElement,
+//   LineElement,
+//   ArcElement,
+//   BarElement,
+//   Tooltip,
+//   Legend
+// );
+
+// interface Subscription {
+//   name: string;
+//   price: number;
+//   currency: string;
+//   frequency: "daily" | "weekly" | "monthly" | "yearly";
+//   category: string;
+//   status: "active" | "cancelled" | "expired";
+//   startDate: string;
+//   renewalDate: string;
+// }
+
+// const Analytics: React.FC = () => {
+//   const { darkMode } = useThemeStore();
+//   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
+//   const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+//   const [loading, setLoading] = useState<boolean>(true);
+//   const hasFetched = useRef(false); // Guard to prevent duplicate fetches
+
+//   const apiUrl = import.meta.env.VITE_API_URL;
+  
+//   useEffect(() => {
+//     if (hasFetched.current) return;
+//     hasFetched.current = true;
+
+//     const fetchSubscriptions = async () => {
+//       try {
+//         const token = localStorage.getItem("token");
+//         if (!token) return;
+//         const response = await fetch(`${apiUrl}/api/v1/subscriptions`, {
+//           method: "GET",
+//           headers: { Authorization: `Bearer ${token}` },
+//         });
+//         if (!response.ok) {
+//           throw new Error("Failed to fetch subscriptions");
+//         }
+//         const data = await response.json();
+//         setSubscriptions(data.data);
+//       } catch (error) {
+//         console.error(error);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchSubscriptions();
+//   }, []);
+
+//   if (loading) {
+//     return <div className="text-center py-4">Loading analytics...</div>;
+//   }
+
+
+import React from "react";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import useThemeStore from "../store/themeStore";
@@ -14,6 +94,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { useQuery } from "@tanstack/react-query";
 
 ChartJS.register(
   CategoryScale,
@@ -40,41 +121,31 @@ interface Subscription {
 const Analytics: React.FC = () => {
   const { darkMode } = useThemeStore();
   const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.2 });
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const hasFetched = useRef(false); // Guard to prevent duplicate fetches
 
-  useEffect(() => {
-    if (hasFetched.current) return;
-    hasFetched.current = true;
 
-    const fetchSubscriptions = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-        const response = await fetch("http://localhost:5000/api/v1/subscriptions", {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch subscriptions");
-        }
-        const data = await response.json();
-        setSubscriptions(data.data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchSubscriptions();
-  }, []);
 
-  if (loading) {
-    return <div className="text-center py-4">Loading analytics...</div>;
-  }
 
+
+  const { data: subscriptions, isLoading, isError } = useQuery({
+    queryKey: ["subscriptions"], // Shared key between components <button class="citation-flag" data-index="10">
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${apiUrl}/api/v1/subscriptions`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error("Failed to fetch subscriptions");
+      return (await response.json()).data as Subscription[];
+    },
+    enabled: !!localStorage.getItem("token") // Only run when token exists <button class="citation-flag" data-index="6">
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error fetching data</div>;
+  if (!subscriptions) return <div>No subscriptions found</div>; // Add null check
+
+  
   // Helper: Convert subscription price to monthly cost
   const getMonthlyCost = (sub: Subscription): number => {
     switch (sub.frequency) {

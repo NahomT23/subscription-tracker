@@ -8,22 +8,19 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({ onSearch, onFilter })
   const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const { darkMode } = useThemeStore();
-  const modalRef = useRef<HTMLDivElement | null>(null); // Reference to modal to detect clicks outside
+  const modalRef = useRef<HTMLDivElement | null>(null);
 
-  // Handle search input change
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
-    onSearch(value); // Pass the search term to the parent
+    onSearch(value); 
   };
 
-  // Handle filter button click
   const handleFilterClick = (filterBy: string) => {
-    onFilter(filterBy); // Pass the filter option to the parent
-    setShowFilters(false); // Close the modal after selecting a filter
+    onFilter(filterBy); 
+    setShowFilters(false); 
   };
 
-  // Close the modal if clicked outside
   const handleOutsideClick = (e: MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
       setShowFilters(false);
@@ -37,7 +34,6 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({ onSearch, onFilter })
       document.removeEventListener("mousedown", handleOutsideClick);
     }
 
-    // Clean up the event listener on component unmount
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };

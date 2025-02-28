@@ -5,42 +5,40 @@ import { useInView } from "react-intersection-observer";
 import useThemeStore from "../store/themeStore";
 import SearchAndFilter from "./SearchAndFilter";
 import { Subscription } from "../types";
+import { useQuery } from "@tanstack/react-query";
 
 const SubscriptionList: React.FC = () => {
-  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
-  const [filteredSubscriptions, setFilteredSubscriptions] = useState<Subscription[]>([]);
-  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
   const { darkMode } = useThemeStore();
+  // const { inView } = useInView({ triggerOnce: true, threshold: 0.1 });
+
+  const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 });
+  const { data: subscriptions } = useQuery({
+    queryKey: ["subscriptions"],
+    queryFn: async () => {
+      const token = localStorage.getItem("token");
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const response = await fetch(`${apiUrl}/api/v1/subscriptions`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error("Failed to fetch subscriptions");
+      return (await response.json()).data as Subscription[];
+    },
+    enabled: !!localStorage.getItem("token") 
+  });
+
+  const [filteredSubscriptions, setFilteredSubscriptions] = useState<Subscription[]>([]);
 
   useEffect(() => {
-    const fetchSubscriptions = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-        const response = await fetch("http://localhost:5000/api/v1/subscriptions", {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!response.ok) {
-          throw new Error("Failed to fetch subscriptions");
-        }
-        const data = await response.json();
-        setSubscriptions(data.data);
-        setFilteredSubscriptions(data.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchSubscriptions();
-  }, []);
+    setFilteredSubscriptions(subscriptions || []);
+  }, [subscriptions]);
 
   const handleSearch = (term: string) => {
-    const filtered = subscriptions.filter((sub) =>
-      sub.name.toLowerCase().includes(term.toLowerCase())
+    setFilteredSubscriptions(
+      subscriptions?.filter((sub) =>
+        sub.name.toLowerCase().includes(term.toLowerCase())
+      ) || []
     );
-    setFilteredSubscriptions(filtered);
   };
-
 
   const handleFilter = (filterBy: string) => {
     let sorted = [...filteredSubscriptions];
@@ -168,3 +166,4 @@ const SubscriptionList: React.FC = () => {
 };
 
 export default SubscriptionList
+
