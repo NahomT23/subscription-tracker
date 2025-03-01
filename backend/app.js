@@ -24,9 +24,12 @@ const PORT = process.env.PORT || 4000
 //   origin: allowedOrigins,
 //   credentials: true,
 // };
+
+
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://subscription-tracker-rho.vercel.app' // No trailing slash
+  'https://subscription-tracker-rho.vercel.app/' // No trailing slash
+ 
 ];
 
 const corsOptions = {
@@ -52,8 +55,8 @@ app.use(cors(corsOptions));
 // app.use(cors(corsOptions)); 
 
 
-app.options('*', cors(corsOptions)); // Handle OPTIONS
-app.use(cors(corsOptions));
+// app.options('*', cors(corsOptions)); // Handle OPTIONS
+// app.use(cors(corsOptions));
 
 
 
