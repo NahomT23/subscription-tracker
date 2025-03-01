@@ -19,6 +19,7 @@ const corsOptions = {
   origin: 'http://localhost:5173',
   credentials: true, 
 };
+// https://subscription-tracker-backend-ivory.vercel.app/
 
 app.use(cors(corsOptions)); 
 
