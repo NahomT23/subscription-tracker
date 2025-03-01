@@ -32,7 +32,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser())  
 app.use(errorMiddleware)
-app.use(arcjetMiddleware)
+// app.use(arcjetMiddleware)
 
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/subscriptions', subscriptionRouter);
