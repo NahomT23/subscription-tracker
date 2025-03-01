@@ -49,7 +49,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({ onSearch, onFilter })
         placeholder="Search..."
         value={searchTerm}
         onChange={handleSearchChange}
-        className={`flex-1 px-4 py-2 rounded-md border ${
+        className={`flex-1 px-4 py-2 rounded-md border${
           darkMode 
             ? "bg-gray-800 text-white border-gray-700" 
             : "bg-white text-gray-800 border-gray-300"
