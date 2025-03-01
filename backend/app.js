@@ -16,7 +16,7 @@ const app = express();
 const PORT = process.env.PORT || 4000
 
 const allowedOrigins = [
-  'https://subscription-tracker-rho.vercel.app/'
+  'https://subscription-tracker-rho.vercel.app'
 ];
 
 
