@@ -28,7 +28,7 @@ const PORT = process.env.PORT || 4000
 
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://subscription-tracker-rho.vercel.app/' // No trailing slash
+  'https://subscription-tracker-rho.vercel.app' // No trailing slash
  
 ];
 
