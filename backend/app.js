@@ -15,11 +15,18 @@ configDotenv()
 const app = express();
 const PORT = process.env.PORT || 4000
 
+
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://subscription-tracker-backend-ivory.vercel.app'
+];
+
 const corsOptions = {
-  origin: 'http://localhost:5173',
-  credentials: true, 
+  origin: allowedOrigins,
+  credentials: true,
 };
-// https://subscription-tracker-backend-ivory.vercel.app/
+
+
 
 app.use(cors(corsOptions)); 
 
@@ -50,3 +57,4 @@ app.listen(PORT, async () => {
 
 
 export default app;
+
