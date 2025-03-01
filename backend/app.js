@@ -9,31 +9,24 @@ import cookieParser from 'cookie-parser';
 import { configDotenv } from 'dotenv';
 import arcjetMiddleware from './middlewares/arcjet.middleware.js';
 import workflowRouter from './routes/workflow.routes.js';
-import cors from "cors"
 configDotenv()
 
 const app = express();
 const PORT = process.env.PORT || 4000
 
 
-const corsOptions = {
-  origin: 'https://subscription-tracker-rho.vercel.app',
-  credentials: true,
-};
-
-app.use(cors(corsOptions));
-
 
 app.use(express.json());
-app.use(cookieParser())  
+app.use(cookieParser()) 
+ 
+app.use(errorMiddleware)
+app.use(arcjetMiddleware)
 
-// app.use(arcjetMiddleware)
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/subscriptions', subscriptionRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/workflows', workflowRouter);
 
-app.use(errorMiddleware)
 
 
 // Test route
