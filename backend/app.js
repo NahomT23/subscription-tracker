@@ -15,16 +15,18 @@ configDotenv()
 const app = express();
 const PORT = process.env.PORT || 4000
 
-
 const allowedOrigins = [
   'http://localhost:5173',
-  'https://subscription-tracker-backend-ivory.vercel.app'
+  'https://subscription-tracker-rho.vercel.app'
 ];
 
 const corsOptions = {
   origin: allowedOrigins,
   credentials: true,
 };
+
+app.use(cors(corsOptions));
+
 
 
 
