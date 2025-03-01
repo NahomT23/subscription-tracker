@@ -15,20 +15,24 @@ configDotenv()
 const app = express();
 const PORT = process.env.PORT || 4000
 
-const allowedOrigins = [
-  'https://subscription-tracker-rho.vercel.app'
-];
+// const allowedOrigins = [
+//   'https://subscription-tracker-rho.vercel.app'
+// ];
+
+
+// const corsOptions = {
+//   origin: allowedOrigins,
+//   credentials: true,
+// };
 
 
 const corsOptions = {
-  origin: allowedOrigins,
+  origin: '*',
   credentials: true,
 };
 
-
-
-app.options('*', cors(corsOptions));
 app.use(cors(corsOptions));
+
 
 app.use(express.json());
 app.use(cookieParser())  
