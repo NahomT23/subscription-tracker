@@ -15,19 +15,9 @@ configDotenv()
 const app = express();
 const PORT = process.env.PORT || 4000
 
-// const allowedOrigins = [
-//   'https://subscription-tracker-rho.vercel.app'
-// ];
-
-
-// const corsOptions = {
-//   origin: allowedOrigins,
-//   credentials: true,
-// };
-
 
 const corsOptions = {
-  origin: '*',
+  origin: 'https://subscription-tracker-rho.vercel.app',
   credentials: true,
 };
 
@@ -38,7 +28,6 @@ app.use(express.json());
 app.use(cookieParser())  
 
 // app.use(arcjetMiddleware)
-
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/subscriptions', subscriptionRouter);
 app.use('/api/v1/auth', authRouter);
