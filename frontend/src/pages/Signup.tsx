@@ -89,6 +89,7 @@ const Signup: React.FC = () => {
           whileTap={{ scale: 0.98 }}
           type="submit"
           className="w-full bg-gradient-to-r from-[#FF6B6B] to-[#FF8E53] text-white py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+          style={{ color: "white" }}
         >
           Sign Up
         </motion.button>
