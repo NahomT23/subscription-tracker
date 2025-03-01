@@ -1,49 +1,105 @@
-import express from 'express';
+// import express from 'express';
 
+// import subscriptionRouter from './routes/subscription.routes.js';
+// import authRouter from './routes/auth.routes.js';
+// import userRouter from './routes/user.routes.js';
+// import connectToDdataBase from './database/mongodb.js';
+// import errorMiddleware from './middlewares/error.middleware.js'
+// import cookieParser from 'cookie-parser';
+// import { configDotenv } from 'dotenv';
+// import arcjetMiddleware from './middlewares/arcjet.middleware.js';
+// import workflowRouter from './routes/workflow.routes.js';
+// configDotenv()
+
+// const app = express();
+// const PORT = process.env.PORT || 4000
+
+
+
+// app.use(express.json());
+// app.use(cookieParser()) 
+ 
+// app.use(errorMiddleware)
+// app.use(arcjetMiddleware)
+
+// app.use('/api/v1/users', userRouter);
+// app.use('/api/v1/subscriptions', subscriptionRouter);
+// app.use('/api/v1/auth', authRouter);
+// app.use('/api/v1/workflows', workflowRouter);
+
+
+
+// // Test route
+// app.get('/', (req, res) => {
+//   res.send("Hello, World!");
+// });
+
+
+// app.listen(PORT, async () => {
+//   console.log(`Server is running on port ${PORT}`);
+
+//   await connectToDdataBase()
+
+// });
+
+
+
+
+// export default app;
+
+import express from 'express';
 import subscriptionRouter from './routes/subscription.routes.js';
 import authRouter from './routes/auth.routes.js';
 import userRouter from './routes/user.routes.js';
-import connectToDdataBase from './database/mongodb.js';
-import errorMiddleware from './middlewares/error.middleware.js'
+import connectToDatabase from './database/mongodb.js';
+import errorMiddleware from './middlewares/error.middleware.js';
 import cookieParser from 'cookie-parser';
 import { configDotenv } from 'dotenv';
 import arcjetMiddleware from './middlewares/arcjet.middleware.js';
 import workflowRouter from './routes/workflow.routes.js';
-configDotenv()
+
+configDotenv();
 
 const app = express();
-const PORT = process.env.PORT || 4000
+const PORT = process.env.PORT || 4000;
 
-
-
+// Middleware ordering fix
 app.use(express.json());
-app.use(cookieParser()) 
- 
-app.use(errorMiddleware)
-app.use(arcjetMiddleware)
+app.use(cookieParser());
+app.use(arcjetMiddleware);
 
+// Routes
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/subscriptions', subscriptionRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/workflows', workflowRouter);
 
-
-
 // Test route
 app.get('/', (req, res) => {
-  res.send("Hello, World!");
+    res.send("Hello, World!");
 });
 
+// Error middleware should come AFTER routes
+app.use(errorMiddleware);
 
-app.listen(PORT, async () => {
-  console.log(`Server is running on port ${PORT}`);
+// Vercel Serverless Function Setup
+let isColdStart = true;
 
-  await connectToDdataBase()
-
-});
-
-
-
-
-export default app;
-
+export default async (req, res) => {
+    // Handle database connection on cold start
+    if (isColdStart) {
+        try {
+            await connectToDatabase();
+            isColdStart = false;
+        } catch (error) {
+            console.error('Failed to connect to database:', error);
+            return res.status(500).json({
+                status: 'error',
+                message: 'Failed to connect to database'
+            });
+        }
+    }
+    
+    // Forward request to Express
+    return app(req, res);
+};
