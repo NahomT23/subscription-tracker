@@ -1,16 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 
 const Signup: React.FC = () => {
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
-  
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,15 +26,16 @@ const Signup: React.FC = () => {
 
       const data = await response.json();
       localStorage.setItem("token", data.data.token);
+      toast.success("Account created successfully!");
       navigate("/dashboard"); 
-    }catch (error) {
-        console.error(error);
-        if (error instanceof Error) {
-          alert(error.message); 
-        } else {
-          alert("An unexpected error occurred");
-        }
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred");
       }
+    }
   };
 
   return (

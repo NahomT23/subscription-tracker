@@ -56,4 +56,3 @@ const triggerReminder = async (context, label, subscription) => {
   })
 }
 
-

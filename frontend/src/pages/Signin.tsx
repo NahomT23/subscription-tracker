@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -8,7 +9,6 @@ const SignIn: React.FC = () => {
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
   
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -25,16 +25,18 @@ const SignIn: React.FC = () => {
 
       const data = await response.json();
       localStorage.setItem("token", data.data.token);
+      toast.success("Signed in successfully!");
       navigate("/dashboard"); 
-    }catch (error) {
-        console.error(error);
-        if (error instanceof Error) {
-          alert(error.message); 
-        } else {
-          alert("An unexpected error occurred");
-        }
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred");
       }
+    }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#2A2A3A] to-[#1A1A2F]">
       <motion.form

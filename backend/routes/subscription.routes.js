@@ -7,7 +7,7 @@ import {
     deleteSubscription,
     cancelSubscription,
     getUpcomingRenewals,
-    getAllSubscriptions
+    getAllSubscriptions,
 } from '../controllers/subscription.controller.js';
 import { authorize } from '../middlewares/auth.middleware.js';
 
@@ -24,5 +24,8 @@ subscriptionRouter.get('/:id', authorize, getSubscriptionById);
 subscriptionRouter.post('/', authorize, createSubscription);
 subscriptionRouter.put('/:id', authorize, updateSubscription);
 subscriptionRouter.delete('/:id', authorize, deleteSubscription);
+
+
+
 
 export default subscriptionRouter;
