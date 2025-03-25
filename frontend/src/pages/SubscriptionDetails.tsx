@@ -181,32 +181,32 @@ const SubscriptionDetail: React.FC = () => {
         </div>
 
         {/* Cancel Subscription */}
-        {subscription.status === "active" && (
-          <div className="mt-6 space-x-4">
-            <button
-              onClick={handleCancel}
-              className={`px-4 py-2 rounded-lg font-medium transition duration-300 ${
-                darkMode
-                  ? "bg-red-600 hover:bg-red-700 focus:ring-red-200"
-                  : "bg-red-500 hover:bg-red-600 focus:ring-red-100"
-              } text-white focus:ring-2 focus:outline-none`}
-            >
-              Cancel Subscription
-            </button>
+       {/* Cancel Subscription (only show if active) */}
+{subscription.status === "active" && (
+  <button
+    onClick={handleCancel}
+    className={`px-4 py-2 rounded-lg font-medium transition duration-300 ${
+      darkMode
+        ? "bg-red-600 hover:bg-red-700 focus:ring-red-200"
+        : "bg-red-500 hover:bg-red-600 focus:ring-red-100"
+    } text-white focus:ring-2 focus:outline-none`}
+  >
+    Cancel Subscription
+  </button>
+)}
 
-            {/* Delete Subscription */}
-            <button
-              onClick={handleDelete}
-              className={`px-4 py-2 rounded-lg font-medium transition duration-300 ${
-                darkMode
-                  ? "bg-red-800 hover:bg-red-900 focus:ring-red-200"
-                  : "bg-red-700 hover:bg-red-600 focus:ring-red-100"
-              } text-white focus:ring-2 focus:outline-none`}
-            >
-              Delete Subscription
-            </button>
-          </div>
-        )}
+{/* Delete Subscription (always show) */}
+<button
+  onClick={handleDelete}
+  className={`px-4 py-2 rounded-lg font-medium transition duration-300 ${
+    darkMode
+      ? "bg-red-800 hover:bg-red-900 focus:ring-red-200"
+      : "bg-red-700 hover:bg-red-600 focus:ring-red-100"
+  } text-white focus:ring-2 focus:outline-none`}
+>
+  Delete Subscription
+</button>
+
       </div>
     </div>
   );
