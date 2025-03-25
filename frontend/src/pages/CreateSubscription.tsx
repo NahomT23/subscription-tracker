@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DarkModeToggle from "../components/DarkModeToggle";
 import useThemeStore from "../store/themeStore";
+import { toast } from "react-toastify";
 
 const CreateSubscription: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -23,6 +24,7 @@ const CreateSubscription: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -42,11 +44,14 @@ const CreateSubscription: React.FC = () => {
         throw new Error("Failed to create subscription");
       }
 
+      toast.success("Subscription created successfully!");
       navigate("/dashboard");
     } catch (error) {
       console.error(error);
+      toast.error("Failed to create subscription");
     }
   };
+
 
   return (
     <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-100"} p-8`}>

@@ -3,6 +3,8 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import DarkModeToggle from "../components/DarkModeToggle";
 import useThemeStore from "../store/themeStore";
 import LoadingMessage from "../components/LoadingMessage";
+import { toast } from "react-toastify";
+
 
 const SubscriptionDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -51,11 +53,14 @@ const SubscriptionDetail: React.FC = () => {
     );
   }
 
+
+  
   const handleCancel = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         console.error("No token found. Please log in.");
+        toast.error("No token found. Please log in.");
         return;
       }
       const response = await fetch(
@@ -73,16 +78,23 @@ const SubscriptionDetail: React.FC = () => {
       }
       const data = await response.json();
       setSubscription(data.data); // Update the subscription state to reflect the cancelled status
+      toast.success("Subscription cancelled successfully!");
     } catch (error) {
       console.error("Error cancelling subscription:", error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred while cancelling subscription");
+      }
     }
   };
-
+  
   const handleDelete = async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         console.error("No token found. Please log in.");
+        toast.error("No token found. Please log in.");
         return;
       }
       const response = await fetch(
@@ -98,12 +110,19 @@ const SubscriptionDetail: React.FC = () => {
       if (!response.ok) {
         throw new Error("Failed to delete subscription");
       }
+      toast.success("Subscription deleted successfully!");
       // After successful deletion, navigate back to the dashboard or other page
       navigate("/dashboard");
     } catch (error) {
       console.error("Error deleting subscription:", error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred while deleting subscription");
+      }
     }
   };
+  
 
   return (
     <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-100"} p-8`}>

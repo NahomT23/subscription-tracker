@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import useThemeStore from "../store/themeStore";
 import DarkModeToggle from "../components/DarkModeToggle";
 import LoadingMessage from "../components/LoadingMessage";
+import { toast } from "react-toastify";
+
 
 const EditSubscription: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -56,12 +58,13 @@ const EditSubscription: React.FC = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
-
+  
       const response = await fetch(`${apiUrl}/api/v1/subscriptions/${id}`, {
         method: "PUT",
         headers: {
@@ -70,16 +73,23 @@ const EditSubscription: React.FC = () => {
         },
         body: JSON.stringify(formData),
       });
-
+  
       if (!response.ok) {
         throw new Error("Failed to update subscription");
       }
-
+  
+      toast.success("Subscription updated successfully!");
       navigate("/dashboard");
     } catch (error) {
       console.error(error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     }
   };
+  
 
   if (loading) {
     return <LoadingMessage message="Loading subscription data..." />;
