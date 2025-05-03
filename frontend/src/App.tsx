@@ -2,8 +2,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 import Signup from "./pages/Signup";
 import SignIn from "./pages/Signin";
@@ -13,15 +11,16 @@ import EditSubscription from "./pages/EditSubscription";
 import SubscriptionDetails from "./pages/SubscriptionDetails";
 import LandingPage from "./pages/LandingPage"; 
 
+import { Toaster } from 'react-hot-toast';
+
 const App: React.FC = () => {
-  // Create a QueryClient instance
+
   const queryClient = new QueryClient();
   
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
-        {/* Place ToastContainer near the root so all pages can use toasts */}
-        <ToastContainer />
+      <Toaster/>
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />

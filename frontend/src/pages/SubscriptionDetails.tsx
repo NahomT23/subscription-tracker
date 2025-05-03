@@ -1,47 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { FaSpinner } from "react-icons/fa";
 import DarkModeToggle from "../components/DarkModeToggle";
 import useThemeStore from "../store/themeStore";
 import LoadingMessage from "../components/LoadingMessage";
-import { toast } from "react-toastify";
-
+import toast from "react-hot-toast";
 
 const SubscriptionDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [subscription, setSubscription] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate(); 
+  const [loadingDetail, setLoadingDetail] = useState(true);
+  const [cancelling, setCancelling] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const navigate = useNavigate();
   const { darkMode } = useThemeStore();
   const apiUrl = import.meta.env.VITE_API_URL;
-  
+
   useEffect(() => {
     const fetchSubscription = async () => {
       try {
         const token = localStorage.getItem("token");
-        if (!token) return;
-
-        const response = await fetch(`${apiUrl}/api/v1/subscriptions/${id}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        if (!token) throw new Error("No token");
+        const res = await fetch(`${apiUrl}/api/v1/subscriptions/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        if (!response.ok) {
-          throw new Error("Failed to fetch subscription");
-        }
-        const data = await response.json();
-        setSubscription(data.data);
-      } catch (error) {
-        console.error(error);
+        if (!res.ok) throw new Error("Failed to fetch subscription");
+        const json = await res.json();
+        setSubscription(json.data);
+      } catch (err) {
+        console.error(err);
+        toast.error("Could not load subscription");
       } finally {
-        setLoading(false);
+        setLoadingDetail(false);
       }
     };
-
     fetchSubscription();
   }, [id]);
 
-  if (loading) {
+  if (loadingDetail) {
     return <LoadingMessage message="Loading subscription details..." />;
   }
 
@@ -53,76 +49,52 @@ const SubscriptionDetail: React.FC = () => {
     );
   }
 
-
-  
   const handleCancel = async () => {
+    setCancelling(true);
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        console.error("No token found. Please log in.");
-        toast.error("No token found. Please log in.");
-        return;
-      }
-      const response = await fetch(
-        `${apiUrl}/api/v1/subscriptions/${id}/cancel`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to cancel subscription");
-      }
-      const data = await response.json();
-      setSubscription(data.data); // Update the subscription state to reflect the cancelled status
-      toast.success("Subscription cancelled successfully!");
-    } catch (error) {
-      console.error("Error cancelling subscription:", error);
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred while cancelling subscription");
-      }
+      if (!token) throw new Error("Please log in");
+      const res = await fetch(`${apiUrl}/api/v1/subscriptions/${id}/cancel`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to cancel subscription");
+      const json = await res.json();
+      setSubscription(json.data);
+      toast.success("Subscription cancelled!");
+    } catch (err) {
+      console.error(err);
+      toast.error((err as Error).message || "Error cancelling");
+    } finally {
+      setCancelling(false);
     }
   };
-  
+
   const handleDelete = async () => {
+    setDeleting(true);
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        console.error("No token found. Please log in.");
-        toast.error("No token found. Please log in.");
-        return;
-      }
-      const response = await fetch(
-        `${apiUrl}/api/v1/subscriptions/${id}`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to delete subscription");
-      }
-      toast.success("Subscription deleted successfully!");
-      // After successful deletion, navigate back to the dashboard or other page
+      if (!token) throw new Error("Please log in");
+      const res = await fetch(`${apiUrl}/api/v1/subscriptions/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) throw new Error("Failed to delete subscription");
+      toast.success("Subscription deleted!");
       navigate("/dashboard");
-    } catch (error) {
-      console.error("Error deleting subscription:", error);
-      if (error instanceof Error) {
-        toast.error(error.message);
-      } else {
-        toast.error("An unexpected error occurred while deleting subscription");
-      }
+    } catch (err) {
+      console.error(err);
+      toast.error((err as Error).message || "Error deleting");
+    } finally {
+      setDeleting(false);
     }
   };
-  
 
   return (
     <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-100"} p-8`}>
@@ -149,64 +121,74 @@ const SubscriptionDetail: React.FC = () => {
           Subscription Details
         </h2>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto mb-6">
           <table className="w-full table-auto border-collapse">
             <tbody className={`${darkMode ? "divide-gray-700" : "divide-gray-200"} divide-y`}>
-              {Object.entries({
-                Name: subscription.name,
-                Price: `${subscription.price} ${subscription.currency}`,
-                Frequency: subscription.frequency,
-                Category: subscription.category,
-                "Payment Method": subscription.paymentMethod,
-"Start Date": subscription.startDate 
-  ? new Date(subscription.startDate).toLocaleDateString('en-GB') 
-  : "Not set",
-
-"Renewal Date": subscription.renewalDate 
-  ? new Date(subscription.renewalDate).toLocaleDateString('en-GB') 
-  : "Not set",
-
-                Status: subscription.status,
-              }).map(([label, value]) => (
+              {[
+                ["Name", subscription.name],
+                ["Price", `${subscription.price} ${subscription.currency}`],
+                ["Frequency", subscription.frequency],
+                ["Category", subscription.category],
+                ["Payment Method", subscription.paymentMethod],
+                [
+                  "Start Date",
+                  subscription.startDate
+                    ? new Date(subscription.startDate).toLocaleDateString("en-GB")
+                    : "Not set",
+                ],
+                [
+                  "Renewal Date",
+                  subscription.renewalDate
+                    ? new Date(subscription.renewalDate).toLocaleDateString("en-GB")
+                    : "Not set",
+                ],
+                ["Status", subscription.status],
+              ].map(([label, value]) => (
                 <tr
                   key={label}
                   className={`${darkMode ? "hover:bg-gray-700" : "hover:bg-gray-50"} transition duration-200`}
                 >
-                  <td className={`px-4 py-3 font-medium ${darkMode ? "text-gray-300" : "text-gray-600"}`}>{label}</td>
-                  <td className={`px-4 py-3 ${darkMode ? "text-gray-100" : "text-gray-800"}`}>{value}</td>
+                  <td className={`px-4 py-3 font-medium ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+                    {label}
+                  </td>
+                  <td className={`px-4 py-3 ${darkMode ? "text-gray-100" : "text-gray-800"}`}>
+                    {value}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        {/* Cancel Subscription */}
-       {/* Cancel Subscription (only show if active) */}
-{subscription.status === "active" && (
-  <button
-    onClick={handleCancel}
-    className={`px-4 py-2 rounded-lg font-medium transition duration-300 ${
-      darkMode
-        ? "bg-red-600 hover:bg-red-700 focus:ring-red-200"
-        : "bg-red-500 hover:bg-red-600 focus:ring-red-100"
-    } text-white focus:ring-2 focus:outline-none`}
-  >
-    Cancel Subscription
-  </button>
-)}
+        <div className="flex space-x-4">
+          {subscription.status === "active" && (
+            <button
+              onClick={handleCancel}
+              disabled={cancelling}
+              className={`flex-1 px-4 py-2 rounded-lg font-medium transition duration-300 flex items-center justify-center focus:outline-none focus:ring-2 ${
+                darkMode
+                  ? "bg-red-600 hover:bg-red-700 focus:ring-red-200 text-white"
+                  : "bg-red-500 hover:bg-red-600 focus:ring-red-100 text-white border border-nlue-500"
+              } ${cancelling ? "opacity-50 cursor-not-allowed" : ""}`}
+            >
+              {cancelling ? <FaSpinner className="animate-spin mr-2" /> : null}
+              {cancelling ? "Cancelling..." : "Cancel Subscription"}
+            </button>
+          )}
 
-{/* Delete Subscription (always show) */}
-<button
-  onClick={handleDelete}
-  className={`px-4 py-2 rounded-lg font-medium transition duration-300 ${
-    darkMode
-      ? "bg-red-800 hover:bg-red-900 focus:ring-red-200"
-      : "bg-red-700 hover:bg-red-600 focus:ring-red-100"
-  } text-white focus:ring-2 focus:outline-none`}
->
-  Delete Subscription
-</button>
-
+          <button
+            onClick={handleDelete}
+            disabled={deleting}
+            className={`flex-1 px-4 py-2 rounded-lg font-medium transition duration-300 flex items-center justify-center focus:outline-none focus:ring-2 ${
+              darkMode
+                ? "bg-red-800 hover:bg-red-900 focus:ring-red-200 text-white"
+                : "bg-red-700 hover:bg-red-600 focus:ring-red-100 text-white border border-red-700"
+            } ${deleting ? "opacity-50 cursor-not-allowed" : ""}`}
+          >
+            {deleting ? <FaSpinner className="animate-spin mr-2" /> : null}
+            {deleting ? "Deleting..." : "Delete Subscription"}
+          </button>
+        </div>
       </div>
     </div>
   );

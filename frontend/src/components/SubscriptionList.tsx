@@ -158,7 +158,7 @@ const SubscriptionList: React.FC = () => {
         </motion.table>
       ) : (
         <p className={`text-center py-4 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-          No subscriptions found.
+          No subscriptions yet
         </p>
       )}
     </div>

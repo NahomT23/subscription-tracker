@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { FaSpinner } from "react-icons/fa";
 import DarkModeToggle from "../components/DarkModeToggle";
 import useThemeStore from "../store/themeStore";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 const CreateSubscription: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -14,19 +15,21 @@ const CreateSubscription: React.FC = () => {
     paymentMethod: "",
     startDate: "",
   });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { darkMode } = useThemeStore();
-
   const apiUrl = import.meta.env.VITE_API_URL;
-  
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
@@ -49,17 +52,24 @@ const CreateSubscription: React.FC = () => {
     } catch (error) {
       console.error(error);
       toast.error("Failed to create subscription");
+    } finally {
+      setLoading(false);
     }
   };
 
-
   return (
-    <div className={`min-h-screen ${darkMode ? "bg-gray-900" : "bg-gray-100"} p-8`}>
+    <div
+      className={`min-h-screen ${
+        darkMode ? "bg-gray-900" : "bg-gray-100"
+      } p-8`}
+    >
       {/* Logo */}
       <Link
         to="/dashboard"
         className={`fixed top-4 left-4 text-xl font-bold ${
-          darkMode ? "text-blue-400 hover:text-blue-300" : "text-blue-600 hover:text-blue-700"
+          darkMode
+            ? "text-blue-400 hover:text-blue-300"
+            : "text-blue-600 hover:text-blue-700"
         } transition duration-300 z-50`}
       >
         SubLog
@@ -75,12 +85,21 @@ const CreateSubscription: React.FC = () => {
           darkMode ? "bg-gray-800 text-gray-100" : "bg-white text-gray-800"
         }`}
       >
-        <h2 className={`text-2xl font-bold mb-6 ${darkMode ? "text-blue-400" : "text-blue-600"}`}>
+        <h2
+          className={`text-2xl font-bold mb-6 ${
+            darkMode ? "text-blue-400" : "text-blue-600"
+          }`}
+        >
           Create New Subscription
         </h2>
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Name */}
           <div>
-            <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+            <label
+              className={`block text-sm font-medium mb-2 ${
+                darkMode ? "text-gray-300" : "text-gray-600"
+              }`}
+            >
               Subscription Name
             </label>
             <input
@@ -90,13 +109,20 @@ const CreateSubscription: React.FC = () => {
               onChange={handleChange}
               required
               className={`w-full px-4 py-2 rounded-lg border ${
-                darkMode ? "bg-gray-700 border-gray-600 focus:border-blue-400" : "border-gray-300 focus:border-blue-500"
+                darkMode
+                  ? "bg-gray-700 border-gray-600 focus:border-blue-400"
+                  : "bg-white border-gray-300 focus:border-blue-500"
               } transition duration-300 focus:ring-2 focus:ring-blue-200 outline-none`}
             />
           </div>
 
+          {/* Price */}
           <div>
-            <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+            <label
+              className={`block text-sm font-medium mb-2 ${
+                darkMode ? "text-gray-300" : "text-gray-600"
+              }`}
+            >
               Price
             </label>
             <input
@@ -106,13 +132,20 @@ const CreateSubscription: React.FC = () => {
               onChange={handleChange}
               required
               className={`w-full px-4 py-2 rounded-lg border ${
-                darkMode ? "bg-gray-700 border-gray-600 focus:border-blue-400" : "border-gray-300 focus:border-blue-500"
+                darkMode
+                  ? "bg-gray-700 border-gray-600 focus:border-blue-400"
+                  : "bg-white border-gray-300 focus:border-blue-500"
               } transition duration-300 focus:ring-2 focus:ring-blue-200 outline-none`}
             />
           </div>
 
+          {/* Currency */}
           <div>
-            <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+            <label
+              className={`block text-sm font-medium mb-2 ${
+                darkMode ? "text-gray-300" : "text-gray-600"
+              }`}
+            >
               Currency
             </label>
             <select
@@ -120,7 +153,9 @@ const CreateSubscription: React.FC = () => {
               value={formData.currency}
               onChange={handleChange}
               className={`w-full px-4 py-2 rounded-lg border ${
-                darkMode ? "bg-gray-700 border-gray-600 focus:border-blue-400" : "border-gray-300 focus:border-blue-500"
+                darkMode
+                  ? "bg-gray-700 border-gray-600 focus:border-blue-400"
+                  : "bg-white border-gray-300 focus:border-blue-500"
               } transition duration-300 focus:ring-2 focus:ring-blue-200 outline-none`}
             >
               <option value="USD">USD</option>
@@ -129,8 +164,13 @@ const CreateSubscription: React.FC = () => {
             </select>
           </div>
 
+          {/* Frequency */}
           <div>
-            <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+            <label
+              className={`block text-sm font-medium mb-2 ${
+                darkMode ? "text-gray-300" : "text-gray-600"
+              }`}
+            >
               Billing Frequency
             </label>
             <select
@@ -138,7 +178,9 @@ const CreateSubscription: React.FC = () => {
               value={formData.frequency}
               onChange={handleChange}
               className={`w-full px-4 py-2 rounded-lg border ${
-                darkMode ? "bg-gray-700 border-gray-600 focus:border-blue-400" : "border-gray-300 focus:border-blue-500"
+                darkMode
+                  ? "bg-gray-700 border-gray-600 focus:border-blue-400"
+                  : "bg-white border-gray-300 focus:border-blue-500"
               } transition duration-300 focus:ring-2 focus:ring-blue-200 outline-none`}
             >
               <option value="daily">Daily</option>
@@ -148,8 +190,13 @@ const CreateSubscription: React.FC = () => {
             </select>
           </div>
 
+          {/* Category */}
           <div>
-            <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+            <label
+              className={`block text-sm font-medium mb-2 ${
+                darkMode ? "text-gray-300" : "text-gray-600"
+              }`}
+            >
               Category
             </label>
             <select
@@ -184,11 +231,16 @@ const CreateSubscription: React.FC = () => {
               <option value="television">Television</option>
               <option value="grocery">Grocery</option>
               <option value="other">Other</option>
-            </select>
+             </select>
           </div>
 
+          {/* Payment Method */}
           <div>
-            <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+            <label
+              className={`block text-sm font-medium mb-2 ${
+                darkMode ? "text-gray-300" : "text-gray-600"
+              }`}
+            >
               Payment Method
             </label>
             <input
@@ -198,13 +250,20 @@ const CreateSubscription: React.FC = () => {
               onChange={handleChange}
               required
               className={`w-full px-4 py-2 rounded-lg border ${
-                darkMode ? "bg-gray-700 border-gray-600 focus:border-blue-400" : "border-gray-300 focus:border-blue-500"
+                darkMode
+                  ? "bg-gray-700 border-gray-600 focus:border-blue-400"
+                  : "bg-white border-gray-300 focus:border-blue-500"
               } transition duration-300 focus:ring-2 focus:ring-blue-200 outline-none`}
             />
           </div>
 
+          {/* Start Date */}
           <div>
-            <label className={`block text-sm font-medium mb-2 ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+            <label
+              className={`block text-sm font-medium mb-2 ${
+                darkMode ? "text-gray-300" : "text-gray-600"
+              }`}
+            >
               Start Date
             </label>
             <input
@@ -214,18 +273,36 @@ const CreateSubscription: React.FC = () => {
               onChange={handleChange}
               required
               className={`w-full px-4 py-2 rounded-lg border ${
-                darkMode ? "bg-gray-700 border-gray-600 focus:border-blue-400" : "border-gray-300 focus:border-blue-500"
+                darkMode
+                  ? "bg-gray-700 border-gray-600 focus:border-blue-400"
+                  : "bg-white border-gray-300 focus:border-blue-500"
               } transition duration-300 focus:ring-2 focus:ring-blue-200 outline-none`}
             />
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
-            className={`w-full py-2 px-4 rounded-lg font-medium transition duration-300 ${
-              darkMode ? "bg-blue-600 hover:bg-blue-700 focus:ring-blue-200" : "bg-blue-700 hover:bg-blue-600 focus:ring-blue-100"
-            } text-white focus:ring-2 focus:outline-none`}
+            disabled={loading}
+            className={`
+              w-full py-2 px-4 rounded-lg font-medium transition duration-300
+              flex items-center justify-center
+              focus:outline-none focus:ring-2
+              ${darkMode
+                ? "bg-blue-600 hover:bg-blue-700 focus:ring-blue-200 text-white"
+                : "bg-blue-700 hover:bg-blue-600 focus:ring-blue-100 text-white border border-blue-700"
+              }
+              ${loading ? "opacity-50 cursor-not-allowed" : ""}
+            `}
           >
-            Create Subscription
+            {loading ? (
+              <>
+                <FaSpinner className="animate-spin mr-2 inline-block" />
+                Creating subscription...
+              </>
+            ) : (
+              "Create Subscription"
+            )}
           </button>
         </form>
       </div>

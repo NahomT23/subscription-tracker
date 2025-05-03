@@ -3,9 +3,8 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import useThemeStore from "../store/themeStore";
 import DarkModeToggle from "../components/DarkModeToggle";
 import LoadingMessage from "../components/LoadingMessage";
-import { toast } from "react-toastify";
-
-
+import toast from 'react-hot-toast';
+import { FaSpinner } from "react-icons/fa";
 const EditSubscription: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [formData, setFormData] = useState({
@@ -256,13 +255,26 @@ const EditSubscription: React.FC = () => {
 
           <button
             type="submit"
-            className={`w-full py-2 px-4 rounded-lg font-medium transition duration-300 ${
-              darkMode
-                ? "bg-green-600 hover:bg-green-700 focus:ring-green-200"
-                : "bg-green-500 hover:bg-green-600 focus:ring-green-100"
-            } text-white focus:ring-2 focus:outline-none`}
+            disabled={loading}
+            className={`
+              w-full py-2 px-4 rounded-lg font-medium transition duration-300
+              flex items-center justify-center
+              focus:outline-none focus:ring-2
+              ${darkMode
+                ? "bg-blue-600 hover:bg-blue-700 focus:ring-blue-200 text-white"
+                : "bg-blue-700 hover:bg-blue-600 focus:ring-blue-100 text-white border border-blue-700"
+              }
+              ${loading ? "opacity-50 cursor-not-allowed" : ""}
+            `}
           >
-            Update Subscription
+            {loading ? (
+              <>
+                <FaSpinner className="animate-spin mr-2 inline-block" />
+                Updating subscription...
+              </>
+            ) : (
+              "Update Subscription"
+            )}
           </button>
         </form>
       </div>

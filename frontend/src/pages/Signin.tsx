@@ -1,14 +1,17 @@
+
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { toast } from "react-toastify";
-
+import toast from 'react-hot-toast';
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL;
-  
+
+  const EMAIL = import.meta.env.VITE_API_EMAIL;
+  const PASSWORD = import.meta.env.VITE_API_PASSWORD;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -26,7 +29,35 @@ const SignIn: React.FC = () => {
       const data = await response.json();
       localStorage.setItem("token", data.data.token);
       toast.success("Signed in successfully!");
-      navigate("/dashboard"); 
+      navigate("/dashboard");
+    } catch (error) {
+      console.error(error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    }
+  };
+
+  const handleGuestLogin = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/api/v1/auth/sign-in`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: EMAIL,
+          password: PASSWORD
+        }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Guest sign-in failed");
+      }
+      const data = await response.json();
+      localStorage.setItem("token", data.data.token);
+      toast.success("Signed in as Guest!");
+      navigate("/dashboard");
     } catch (error) {
       console.error(error);
       if (error instanceof Error) {
@@ -76,15 +107,24 @@ const SignIn: React.FC = () => {
           whileTap={{ scale: 0.98 }}
           type="submit"
           className="w-full bg-gradient-to-r from-[#FF6B6B] to-[#FF8E53] text-white py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-          style={{ color: "white" }}
         >
           Sign In
         </motion.button>
 
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          type="button"
+          onClick={handleGuestLogin}
+          className="w-full mt-4 bg-gradient-to-r from-[#6B6BFF] to-[#8E53FF] text-white py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+        >
+          Enter as Guest
+        </motion.button>
+
         <p className="text-sm text-gray-600 mt-6 text-center">
-          Don't have an account?{" "}
-          <Link 
-            to="/signup" 
+          Don't have an account?{' '}
+          <Link
+            to="/signup"
             className="bg-gradient-to-r from-[#FF6B6B] to-[#FF8E53] bg-clip-text font-semibold hover:opacity-80 transition-opacity text-blue-600"
           >
             Sign Up

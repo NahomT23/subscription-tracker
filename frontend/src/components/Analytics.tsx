@@ -49,7 +49,7 @@ const Analytics: React.FC = () => {
 
 
   const { data: subscriptions, isLoading, isError } = useQuery({
-    queryKey: ["subscriptions"], // Shared key between components <button class="citation-flag" data-index="10">
+    queryKey: ["subscriptions"], 
     queryFn: async () => {
       const token = localStorage.getItem("token");
       const apiUrl = import.meta.env.VITE_API_URL;
@@ -59,7 +59,7 @@ const Analytics: React.FC = () => {
       if (!response.ok) throw new Error("Failed to fetch subscriptions");
       return (await response.json()).data as Subscription[];
     },
-    enabled: !!localStorage.getItem("token") // Only run when token exists <button class="citation-flag" data-index="6">
+    enabled: !!localStorage.getItem("token") 
   });
 
   if (isLoading) return <div>Loading...</div>;

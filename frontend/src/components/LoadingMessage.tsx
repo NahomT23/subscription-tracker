@@ -1,4 +1,3 @@
-// components/LoadingMessage.tsx
 import { motion } from "framer-motion";
 import  useThemeStore from "../store/themeStore";
 
